@@ -22,6 +22,15 @@ class Application
     }
 
     /**
+     * Run The Application
+     * 
+     * @return void
+     */
+    public function run()
+    {
+    }
+
+    /**
      * Register Classes in spl auto load register
      * 
      * @return void
@@ -58,11 +67,35 @@ class Application
             $this->file->require($file);
     }
 
+    /**
+     * get the property from container
+     * 
+     * @param string $key
+     * @return bool
+     */
     public function get($key)
     {
-        return isset($this->container[$key]) ? $this->container[$key] : null;
+        if (!$this->isSharing($key)) {
+            if (!$this->isCoreAlias($key)) {
+                die(ucfirst($key) . ' is Not Found in Application');
+            }
+
+            $this->share($key, $this->createNewCoreObject($key));
+        }
+
+        return  $this->container[$key];
     }
 
+
+    /**
+     * check if the property is sharing
+     * 
+     * @param $key
+     */
+    private function isSharing($key)
+    {
+        return isset($this->container[$key]);
+    }
     /**
      * Share the given key|value through Application
      * 
@@ -76,11 +109,51 @@ class Application
     }
 
     /**
+     * check if key in core aliases
+     * 
+     * @return bool
+     */
+    private function isCoreAlias($alias)
+    {
+        $coreClasses = $this->coreClasses();
+
+        return isset($coreClasses[$alias]);
+    }
+
+    /**
+     * create new object from core class 
+     * 
+     * @param string $alias
+     * @return object
+     */
+    private function createNewCoreObject($alias)
+    {
+        $coreClasses = $this->coreClasses();
+        $object      = $coreClasses[$alias];
+
+        return new $object($this);
+    }
+
+
+    /**
      * get shred value dynamically
      * 
      * @param string $key 
      * @return mixed
      */
+    private function coreClasses()
+    {
+        return [
+            'request'   => 'System\\Http\\Request',
+            'response'  => 'System\\Http\\Response',
+            'session'   => 'System\\Session',
+            'cookie'    => 'System\\Cookie',
+            'load'      => 'System\\Loader',
+            'html'      => 'System\\Html',
+            'db'        => 'System\\Database',
+            'view'      => 'System\\View\\ViewFactory'
+        ];
+    }
 
     public function __get($key)
     {
