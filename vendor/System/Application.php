@@ -10,17 +10,39 @@ class Application
      */
     private $container = [];
 
+    /**
+     * new instance 
+     * 
+     * @var $instance
+     */
+    private static $instance;
+
     /* Constructor 
      * 
      * @param \System\File $file
      */
-    public function __construct(File $file)
+    private function __construct(File $file)
     {
         $this->share('file', $file);
         $this->registerClasses();
         $this->loadHelpers();
     }
 
+    /**
+     * get Application instance
+     * 
+     * @param \System\File $file
+     * 
+     * @return \System\Application
+     */
+    public static function getInstance($file = null)
+    {
+        if (is_null(static::$instance)) {
+            static::$instance = new static($file);
+        }
+
+        return static::$instance;
+    }
     /**
      * Run The Application
      * 
@@ -30,6 +52,8 @@ class Application
     {
         $this->session->start();
         $this->request->prepareUrl();
+        $this->file->require('App/index.php');
+        list($controller, $method, $arguments) = $this->route->getProperRoute();
     }
 
     /**
@@ -49,7 +73,7 @@ class Application
      */
     public function loadHelpers()
     {
-        $this->file->require($this->file->toVendor("Helpers.php"));
+        $this->file->require(("vendor/Helpers.php"));
     }
     /**
      * Load Class Through autoloading
@@ -60,9 +84,9 @@ class Application
     public function load($class)
     {
         if (strpos($class, "App") === 0) {
-            $file = $this->file->to($class . ".php");
+            $file = $class . ".php";
         } else {
-            $file = $this->file->toVendor($class . ".php");
+            $file = "vendor/" . $class . ".php";
         }
 
         if ($this->file->exists($file))
@@ -148,6 +172,7 @@ class Application
         return [
             'request'   => 'System\\Http\\Request',
             'response'  => 'System\\Http\\Response',
+            'route'     => 'System\\Route',
             'session'   => 'System\\Session',
             'cookie'    => 'System\\Cookie',
             'load'      => 'System\\Loader',
