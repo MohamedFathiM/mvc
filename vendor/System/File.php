@@ -39,7 +39,7 @@ class File
      * @return void 
      */
 
-    public function require($file)
+    public function call($file)
     {
         require $this->to($file);
     }
