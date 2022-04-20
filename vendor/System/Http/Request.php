@@ -6,6 +6,12 @@ use System\Application;
 
 class Request
 {
+    /**
+     * Application Object 
+     * 
+     * @var \System\Application
+     */
+    private $app;
 
     /**
      * url 
@@ -46,9 +52,9 @@ class Request
 
         $this->url = preg_replace('#^' . $script . '$#', '', $requestUri);
         $this->baseUrl = $this->server('REQUEST_SCHEME') ?? 'Http' . '://' . $this->server('HTTP_HOST') . $script;
-    }   
+    }
 
-    
+
     /**
      * get data from $_SERVER
      * 
@@ -74,7 +80,7 @@ class Request
     {
         return array_get($_GET, $key, $default);
     }
-    
+
     /**
      * get data from $_POST
      * 
