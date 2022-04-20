@@ -54,6 +54,7 @@ class Application
         $this->request->prepareUrl();
         $this->file->call('App/index.php');
         list($controller, $method, $arguments) = $this->route->getProperRoute();
+        $this->load->action($controller, $method, $arguments);
     }
 
     /**
