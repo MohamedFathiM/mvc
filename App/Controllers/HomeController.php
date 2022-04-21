@@ -8,6 +8,9 @@ class HomeController extends Controller
 {
     public function index()
     {
-       echo $this->request->url();
+        $this->response->setHeader('name', 'Mohamed');
+        $data['name'] = "Mohamed";
+
+        return  $this->view->render('main/home', $data);
     }
 }
