@@ -216,7 +216,7 @@ class Database
         }
 
         $sql = $this->fetchStatement();
-        $result = $this->query($sql)->fetch();
+        $result = $this->query($sql, $this->bindings)->fetch();
         $this->reset();
 
         return $result;

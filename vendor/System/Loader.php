@@ -21,6 +21,13 @@ class Loader
     private array $controllers = [];
 
     /**
+     * models array
+     * 
+     * @var array $models
+     */
+    private array $models = [];
+
+    /**
      * Constructor 
      * 
      * @param \System\Application
@@ -128,9 +135,22 @@ class Loader
      */
     public function model($model)
     {
-        # code...
+        $model = $this->getModelName($model);
+
+        if (!$this->hasModel($model)) {
+            $this->addModel($model);
+        }
+
+        return $this->getModel($model);
     }
 
+    public function getModelName($model)
+    {
+        $model .= 'Model';
+        $model  = 'App\\Models\\' . $model;
+
+        return str_replace('/', '\\', $model);
+    }
     /**
      * determine if the given model exists in the models container
      * 
@@ -140,7 +160,7 @@ class Loader
      */
     private function hasModel($model)
     {
-        # code...
+        return array_key_exists($model, $this->models);
     }
 
     /**
@@ -153,7 +173,9 @@ class Loader
      */
     private function addModel($model)
     {
-        # code...
+        $object = new $model($this->app);
+
+        $this->models[$model] = $object;
     }
 
     /**
@@ -165,6 +187,6 @@ class Loader
      */
     private function getModel($model)
     {
-        # code...
+        return $this->models[$model];
     }
 }
