@@ -51,7 +51,8 @@ class Request
         }
 
         $this->url = preg_replace('#^' . $script . '$#', '', $requestUri);
-        $this->baseUrl = $this->server('REQUEST_SCHEME') ?? 'Http' . '://' . $this->server('HTTP_HOST') . $script;
+
+        $this->baseUrl = $this->server('REQUEST_SCHEME') ?? 'http://' . $this->server('HTTP_HOST') . trim($script,'\\') . '/';
     }
 
 
